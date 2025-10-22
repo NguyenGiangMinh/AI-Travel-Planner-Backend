@@ -20,6 +20,9 @@ public class AuthService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("Email already registered");
         }
+        if (user.getPhone() != null && userRepository.existsByPhone(user.getPhone())) {
+            throw new IllegalArgumentException("Phone already in use");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         String token = jwtUtil.generateToken(savedUser.getEmail());
