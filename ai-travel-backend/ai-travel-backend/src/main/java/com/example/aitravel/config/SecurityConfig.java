@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll() //Cho phep tat ca moi nguoi co the xem anh
-                        .requestMatchers("/api/users/**").authenticated() //Bat buoc phai dang nhap de dund API
+                        .requestMatchers("/api/user/**").authenticated() //Bat buoc phai dang nhap de dund API
                         .anyRequest().authenticated()
                 );
 
