@@ -26,6 +26,9 @@ public class User {
 
     private String displayName;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
     private Double avgBudget;
 
     @Column(columnDefinition = "json")
