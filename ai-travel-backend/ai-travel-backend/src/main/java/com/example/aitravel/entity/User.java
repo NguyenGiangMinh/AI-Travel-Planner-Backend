@@ -1,5 +1,6 @@
 package com.example.aitravel.entity;
 
+import lombok.Builder;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,5 +35,6 @@ public class User {
     @Column(columnDefinition = "json")
     private String preferences;
 
+    @Builder.Default
     private boolean twoFaEnabled = false;
 }
