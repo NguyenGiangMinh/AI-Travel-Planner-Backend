@@ -31,27 +31,28 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/{userId}/avatar")
-    public ResponseEntity<?> uploadAvatar(Authentication authentication, @PathVariable Long userId, @RequestParam("file")MultipartFile file) {
-        //Kiem tra bao mat
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(
+            Authentication authentication,
+            @RequestPart(value = "displayName", required = false) String displayName,
+            @RequestPart(value = "email", required = false) String email,
+            @RequestPart(value = "password", required = false) String password,
+            @RequestPart(value = "avatarUrl", required = false) MultipartFile avatarFile
+    ) {
         if (authentication == null || authentication.getPrincipal() == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthenticated");
         }
-
-        User user = (User) authentication.getPrincipal();
-
-        //Kiem tra nguoi danh nhap co phai la chu tai khoan khong
-        if (!user.getId().equals(userId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed to update this user's avatar.");
-        }
+        User currentUser = (User) authentication.getPrincipal();
 
         try {
-            User updateUser = userService.updateAvatar(userId, file);
-            return ResponseEntity.ok(updateUser.getAvatarUrl());
+            User updatedUser = userService.updateUserProfile(currentUser.getId(), displayName, email, password, avatarFile);
+            updatedUser.setPassword(null);
+            return ResponseEntity.ok(updatedUser);
+
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not upload the file: " + e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 

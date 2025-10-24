@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,6 +25,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${app.upload.dir}")
     private String uploadDir;
@@ -38,29 +42,37 @@ public class UserService {
         }
     }
 
-    public User updateAvatar(Long userId, MultipartFile file) throws IOException {
-        //Kiem tra file
-        if (file.isEmpty()) {
-            throw new RuntimeException("Failed to store empty file.");
-        }
+    @Transactional
+    public User updateUserProfile(Long userId, String displayName, String email, String password, MultipartFile avatarFile) throws IOException {
         User user = getUserById(userId);
 
-        //Luu file duy nhat tranh trung lap
-        String originalFilename = file.getOriginalFilename();
-        String fileExtension = "";
-        if (originalFilename != null && originalFilename.contains(".")) {
-            fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        if (StringUtils.hasText(displayName)) {
+            user.setDisplayName(displayName);
         }
-        String uniqueFilename = userId + "_" + UUID.randomUUID().toString() + fileExtension;
 
-        //Luu file vao thu muc
-        Path targetLocation = this.fileStorageLocation.resolve(uniqueFilename);
-        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+        if (StringUtils.hasText(email)) {
+            user.setEmail(email);
+        }
 
-        //Tao duong dan de luu vao database
-        String avatarUrl = "/uploads/avatars/" + uniqueFilename;
-        //Cap nhat URL vao user va luu lai
-        user.setAvatarUrl(avatarUrl);
+        if (StringUtils.hasText(password)) {
+            user.setPassword(passwordEncoder.encode(password));
+        }
+
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            String originalFilename = avatarFile.getOriginalFilename();
+            String fileExtension = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+            String uniqueFilename = userId + "_" + UUID.randomUUID().toString() + fileExtension;
+
+            Path targetLocation = this.fileStorageLocation.resolve(uniqueFilename);
+            Files.copy(avatarFile.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            String avatarUrl = "/uploads/avatars/" + uniqueFilename;
+            user.setAvatarUrl(avatarUrl);
+        }
+
         return userRepository.save(user);
     }
 
