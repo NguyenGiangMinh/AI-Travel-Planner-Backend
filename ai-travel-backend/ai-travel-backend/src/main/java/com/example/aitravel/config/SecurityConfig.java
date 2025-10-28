@@ -33,9 +33,17 @@ public class SecurityConfig {
                 .httpBasic(basic -> basic.disable())
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(authenticationEntryPoint()))
                 .authorizeHttpRequests(auth -> auth
+                        // 1. Các đường dẫn PUBLIC (permitAll) phải được khai báo TRƯỚC
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/uploads/**").permitAll() //Cho phep tat ca moi nguoi co the xem anh
-                        .requestMatchers("/api/user/**").authenticated() //Bat buoc phai dang nhap de dund API
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/api/places/most-viewed").permitAll()
+                        .requestMatchers("/api/places/latest").permitAll() // <-- Sửa typo "lastest"
+
+                        // 2. Các đường dẫn PRIVATE (authenticated) khai báo SAU
+                        .requestMatchers("/api/user/**").authenticated()   // Cần đăng nhập
+                        .requestMatchers("/api/places/**").authenticated() // <-- Bất kỳ API "places" nào khác (bao gồm /.../view) đều cần đăng nhập
+
+                        // 3. Tất cả các request còn lại đều cần đăng nhập
                         .anyRequest().authenticated()
                 );
 
