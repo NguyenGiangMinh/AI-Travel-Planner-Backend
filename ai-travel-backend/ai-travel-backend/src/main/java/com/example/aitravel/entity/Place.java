@@ -33,5 +33,16 @@ public class Place {
     @Column(name = "created_at", updatable = false)
     private Instant createdAt; // Cho Latest
 
+    @Column(name = "rating", columnDefinition = "DOUBLE DEFAULT 0.0")
+    private Double rating = 0.0;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "lat", columnDefinition = "DOUBLE")
+    private Double lat;
+
+    @Column(name = "lng", columnDefinition = "DOUBLE")
+    private Double lng;
     // Thêm các trường khác nếu cần (description, lat, lng...)
 }

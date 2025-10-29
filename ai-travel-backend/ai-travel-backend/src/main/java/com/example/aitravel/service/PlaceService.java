@@ -34,4 +34,14 @@ public class PlaceService {
         place.setViewCount(place.getViewCount() + 1);
         placeRepository.save(place);
     }
+
+    @Transactional // Dùng @Transactional để tăng view_count
+    public Place getPlaceDetails(Long placeId) {
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy địa điểm"));
+
+        // Tăng lượt xem mỗi khi có người xem chi tiết
+        place.setViewCount(place.getViewCount() + 1);
+        return placeRepository.save(place);
+    }
 }

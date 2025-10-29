@@ -37,4 +37,10 @@ public class PlaceController {
         placeService.incrementViewCount(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Place> getPlaceById(@PathVariable Long id) {
+        Place place = placeService.getPlaceDetails(id);
+        return ResponseEntity.ok(place);
+    }
 }
