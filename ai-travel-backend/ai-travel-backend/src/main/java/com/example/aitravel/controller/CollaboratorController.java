@@ -1,12 +1,14 @@
-package com.example.ai_travel_planner.controller;
+package com.example.aitravel.controller;
 
-import com.example.travelplanner.model.ItineraryCollaborator;
-import com.example.ai_travel_planner.service.CollaboratorService;
+import com.example.aitravel.entity.User;
+import com.example.aitravel.entity.ItineraryCollaborator;
+import com.example.aitravel.service.CollaboratorService;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/collaborators")
+@RequestMapping("/api/itineraries/{itineraryId}/collaborators")
 public class CollaboratorController {
     private final CollaboratorService collaboratorService;
 
@@ -14,13 +16,20 @@ public class CollaboratorController {
         this.collaboratorService = collaboratorService;
     }
 
-    @GetMapping("/itinerary/{itineraryId}")
+    @GetMapping
     public List<ItineraryCollaborator> getCollaborators(@PathVariable Long itineraryId) {
         return collaboratorService.getCollaboratorsByItinerary(itineraryId);
     }
 
-    @PostMapping
-    public ItineraryCollaborator addCollaborator(@RequestBody ItineraryCollaborator collaborator) {
-        return collaboratorService.addCollaborator(collaborator);
+    @PostMapping("/invite")
+    public ItineraryCollaborator inviteCollaborator(
+            @PathVariable Long itineraryId,
+            @RequestParam String email,
+            @RequestParam ItineraryCollaborator.Role role,
+            Authentication authentication) {
+
+        User invitingUser = (User) authentication.getPrincipal();
+
+        return collaboratorService.inviteByEmail(itineraryId, email, role, invitingUser);
     }
 }
