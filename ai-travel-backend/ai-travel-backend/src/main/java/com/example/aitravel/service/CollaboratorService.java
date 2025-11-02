@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CollaboratorService { // <-- ĐÂY LÀ NỘI DUNG ĐÚNG
+public class CollaboratorService {
     private final ItineraryCollaboratorRepository collaboratorRepository;
     private final UserRepository userRepository;
     private final ItineraryRepository itineraryRepository;
@@ -25,7 +25,6 @@ public class CollaboratorService { // <-- ĐÂY LÀ NỘI DUNG ĐÚNG
     }
 
     public List<ItineraryCollaborator> getCollaboratorsByItinerary(Long itineraryId) {
-        // Hàm này đã dùng JOIN FETCH, rất tốt
         return collaboratorRepository.findByItineraryIdWithUser(itineraryId);
     }
 

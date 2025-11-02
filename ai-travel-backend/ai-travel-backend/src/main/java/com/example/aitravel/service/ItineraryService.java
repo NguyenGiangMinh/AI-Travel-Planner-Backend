@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 @Service
-public class ItineraryService { // <-- ĐÂY LÀ NỘI DUNG ĐÚNG
+public class ItineraryService {
     private final ItineraryRepository itineraryRepository;
     private final ItineraryCollaboratorRepository collaboratorRepository;
 
@@ -25,7 +25,6 @@ public class ItineraryService { // <-- ĐÂY LÀ NỘI DUNG ĐÚNG
         this.collaboratorRepository = collaboratorRepository;
     }
 
-    // Hàm này đã đúng
     public List<Itinerary> getUserItineraries(Long userId) {
         List<Itinerary> ownedItineraries = itineraryRepository.findByOwnerId(userId);
         List<ItineraryCollaborator> collaborations = collaboratorRepository.findByUserId(userId);
@@ -42,7 +41,6 @@ public class ItineraryService { // <-- ĐÂY LÀ NỘI DUNG ĐÚNG
         return allItineraries;
     }
 
-    // Hàm này đã đúng
     public Itinerary createItinerary(Itinerary itinerary) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
@@ -53,7 +51,6 @@ public class ItineraryService { // <-- ĐÂY LÀ NỘI DUNG ĐÚNG
 
         Itinerary savedItinerary = itineraryRepository.save(itinerary);
 
-        // Tự động thêm chủ sở hữu làm collaborator
         ItineraryCollaborator ownerAsCollaborator = new ItineraryCollaborator();
         ownerAsCollaborator.setItineraryId(savedItinerary.getId());
         ownerAsCollaborator.setUserId(currentUser.getId());
@@ -65,7 +62,6 @@ public class ItineraryService { // <-- ĐÂY LÀ NỘI DUNG ĐÚNG
         return savedItinerary;
     }
 
-    // Hàm này đã sửa lỗi logic (dùng existsBy)
     public Itinerary getItineraryById(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
@@ -75,7 +71,6 @@ public class ItineraryService { // <-- ĐÂY LÀ NỘI DUNG ĐÚNG
 
         boolean isOwner = itinerary.getOwner().getId().equals(currentUser.getId());
 
-        // Bạn cần thêm hàm 'existsByItineraryIdAndUserId' vào Repository
         boolean isCollaborator = collaboratorRepository
                 .existsByItineraryIdAndUserId(id, currentUser.getId());
 
@@ -86,7 +81,6 @@ public class ItineraryService { // <-- ĐÂY LÀ NỘI DUNG ĐÚNG
         }
     }
 
-    // Hàm này đã đúng
     public InviteLinkResponse generateInviteLink(Long itineraryId, User currentUser) {
         Itinerary itinerary = this.getItineraryById(itineraryId);
         String link = "aitravelapp://join?tripId=" + itinerary.getId();

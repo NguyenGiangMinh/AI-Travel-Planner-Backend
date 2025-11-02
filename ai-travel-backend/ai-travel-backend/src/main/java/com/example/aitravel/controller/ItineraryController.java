@@ -33,9 +33,9 @@ public class ItineraryController {
         return itineraryService.getItineraryById(id);
     }
 
-    @GetMapping("/{itineraryId}/invite-link") // <-- Tên Path phải khớp ApiService.java
+    @GetMapping("/{itineraryId}/invite-link")
     public InviteLinkResponse getInviteLink(
-            @PathVariable Long itineraryId, // <-- Tên Path phải khớp ApiService.java
+            @PathVariable Long itineraryId,
             Authentication authentication) {
 
         User currentUser = (User) authentication.getPrincipal();

@@ -8,7 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InviteLinkResponse {
-    // Class này phải khớp với InviteLinkResponse.java
-    // bên phía Android
     private String link;
 }

@@ -16,7 +16,6 @@ public class CollaboratorId implements Serializable {
         this.userId = userId;
     }
 
-    // Getters, Setters, equals, hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
